@@ -2,10 +2,20 @@ const express = require('express');
 const rota = express();
 const db = require('../database/maria').pool;
 const multer = require('multer');
-const upload = multer({dest:'uploads/'})
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb){
+        cb(null, './uploads/')
+    },
+    filename: function(req, file, cb){
+        cb(null, file.originalname)
+    }
+
+});
+const upload = multer({storage:storage})
 // rota de fato: Retorna todos os produtos
 
-rota.get('/todos', upload.single('produto_image') ,(req, res, next)=>{
+rota.get('/todos', (req, res, next)=>{
 
     db.getConnection((err, conn)=>{
 
@@ -23,8 +33,9 @@ rota.get('/todos', upload.single('produto_image') ,(req, res, next)=>{
 });
 
 // rota tipo post, Cadastra 
-rota.post('/', (req, res, next)=>{
+rota.post('/', upload.single('produto_image') ,(req, res, next)=>{
 
+    console.log(req.file);
     var novoProduto = [
         req.body.name,
         req.body.preco
