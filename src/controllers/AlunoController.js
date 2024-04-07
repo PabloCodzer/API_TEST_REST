@@ -24,7 +24,7 @@ class AlunoController{
     {
       res.status(401)
       .json({
-              erro :  e.errors.map(err => err.message),
+              erro : "Erro ao buscar alunos",
       });
     }
   }
